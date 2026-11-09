@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Huyền Thoại Ánh Trăng — Anime RPG 3D-style</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+ <h1 class="logo">HUYỀN THOẠI ÁNH TRĂNG</h1>
+ <div class="subtitle">ANIME PARTY BATTLE · TURN-BASED RPG</div>
+</header>
+<div class="wrap">
+
+ <div class="panel accountPanel" id="accountPanel">
+  <div class="accountHeader">
+   <div><h2 style="margin-bottom:4px">👤 Tài khoản & giao dịch người chơi</h2><div class="authNote">Tạo tài khoản để lưu tiến trình trên máy chủ và trao đổi vật phẩm với người chơi khác.</div></div>
+   <span class="pill" id="authStatus">Chưa đăng nhập</span>
+  </div>
+  <div id="authForms" class="accountGrid" style="margin-top:12px">
+   <div class="accountCard">
+    <h3>🔐 Đăng nhập</h3>
+    <label>Tên tài khoản</label><input id="loginUser" autocomplete="username" maxlength="20" placeholder="vd: astra123">
+    <label>Mật khẩu</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Mật khẩu">
+    <button id="loginBtn">Đăng nhập</button>
+    <div class="authNote">Đã có tài khoản? Đăng nhập để tải tiến trình trên máy chủ.</div>
+   </div>
+   <div class="accountCard">
+    <h3>✨ Tạo tài khoản mới</h3>
+    <label>Tên tài khoản (3–20 ký tự)</label><input id="regUser" maxlength="20" autocomplete="username" placeholder="Chỉ chữ thường, số, _">
+    <label>Mật khẩu (ít nhất 8 ký tự)</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Tạo mật khẩu">
+    <div class="authNote">Thiết lập đủ 5 câu trả lời bảo mật. Khi quên mật khẩu, hệ thống chọn ngẫu nhiên 3 câu trong số này.</div>
+    <div id="registrationAnswers"></div>
+    <button id="registerBtn">Tạo tài khoản</button>
+   </div>
+   <div class="accountCard">
+    <h3>🗝️ Quên mật khẩu</h3>
+    <label>Tên tài khoản</label><input id="recoverUser" maxlength="20" placeholder="Tên tài khoản cần khôi phục">
+    <button id="startRecoveryBtn">Lấy 3 câu hỏi ngẫu nhiên</button>
+    <div id="recoveryStep" class="hiddenUI">
+     <div class="authNote" style="margin:8px 0">Trả lời chính xác cả 3 câu đã thiết lập. Bạn có tối đa 3 lần thử; sai 3 lần sẽ khóa khôi phục 30 phút.</div>
+     <div id="recoveryQuestions" class="recoveryQuestions"></div>
+     <button id="verifyRecoveryBtn">Xác minh câu trả lời</button>
+    </div>
+    <div id="resetStep" class="hiddenUI">
+     <label>Mật khẩu mới</label><input id="newPassword" type="password" autocomplete="new-password" placeholder="Ít nhất 8 ký tự">
+     <button id="resetPasswordBtn">Đặt mật khẩu mới</button>
+    </div>
+   </div>
+  </div>
+  <div id="authMessage" class="tradeStatus" style="margin-top:8px"></div>
+  <div id="accountLogged" class="accountLogged">
+   <div class="accountHeader"><div>Đang đăng nhập: <strong id="accountName"></strong><div class="authNote">Tiến trình game được đồng bộ vào tài khoản này.</div></div><button id="logoutBtn">Đăng xuất</button></div>
+   <div class="tradeGrid">
+    <div class="tradeBox">
+     <h3>🎒 Kho vật phẩm có thể trao đổi</h3>
+     <div class="authNote">Kho giao dịch dùng vật liệu riêng của tài khoản. Vật phẩm được giữ trong lúc chờ; từ chối hoặc hủy sẽ tự hoàn lại.</div>
+     <div id="tradeInventory"></div>
+    </div>
+    <div class="tradeBox">
+     <h3>🤝 Tạo đề nghị trao đổi</h3>
+     <div class="tradeForm">
+      <label>Người nhận (tên tài khoản)</label><input id="tradeTo" maxlength="20" placeholder="Tên người chơi">
+      <label>Bạn gửi</label><select id="giveItem"></select><input id="giveQty" type="number" min="1" max="999" value="1" aria-label="Số lượng gửi">
+      <label>Bạn muốn nhận</label><select id="wantItem"></select><input id="wantQty" type="number" min="1" max="999" value="1" aria-label="Số lượng muốn nhận">
+      <button id="createTradeBtn">Gửi đề nghị trao đổi</button>
+     </div>
+     <div class="tradeStatus" id="tradeMessage"></div>
+    </div>
+   </div>
+   <div class="tradeBox" style="margin-top:12px">
+    <h3>📨 Đề nghị trao đổi</h3>
+    <div id="tradeOffers" class="authNote">Chưa có giao dịch.</div>
+    <button id="refreshTradesBtn">Làm mới giao dịch</button>
+   </div>
+  </div>
+ </div>
+
+ <div class="topbar">
+  <div class="pill">🌙 Chương <b id="chapter">1</b> · Rừng Nguyệt Ảnh</div>
+  <div class="pill">🪙 <b id="goldTop">0</b> vàng</div>
+  <div class="pill" id="saveStatus">💾 Đang kiểm tra bản lưu...</div>
+ </div>
+ <div class="layout">
+  <aside>
+   <div class="panel">
+    <h2>✦ Hồ sơ chiến binh</h2>
+    <div class="hero">
+     <div class="avatar" id="avatar">🗡️</div>
+     <div class="heroName" id="heroName">Astra</div>
+     <div class="heroClass">Kiếm sĩ Ánh Trăng</div>
+     <div class="level">CẤP <span id="level">1</span></div>
+    </div>
+    <div class="statrow"><span>❤️ Sinh lực</span><b id="hpText">120 / 120</b></div>
+    <div class="bar"><div class="fill hp" id="hpBar" style="width:100%"></div></div>
+    <div class="statrow"><span>💧 Năng lượng</span><b id="mpText">45 / 45</b></div>
+    <div class="bar"><div class="fill mp" id="mpBar" style="width:100%"></div></div>
+    <div class="statrow"><span>✨ Kinh nghiệm</span><b id="xpText">0 / 60</b></div>
+    <div class="bar"><div class="fill xp" id="xpBar" style="width:0%"></div></div>
+    <div class="attributes">
+     <div class="attr">⚔️ Tấn công<b id="atk">18</b></div>
+     <div class="attr">🛡️ Phòng thủ<b id="def">7</b></div>
+     <div class="attr">🧪 Bình hồi phục<b id="potions">3</b></div>
+     <div class="attr">🏆 Chiến thắng<b id="wins">0</b></div>
+     <div class="attr">💫 Mạng hồi sinh miễn phí<b id="reviveStatus" class="reviveReady">Còn 1 mạng</b></div><div class="attr">🐉 Boss đã hạ<b id="bossCount">0</b></div><div class="attr">💸 Số lần gục ngã<b id="deathCount">0</b></div>
+    </div>
+   </div>
+   <div class="panel">
+    <h2>🎒 Trang bị hiện tại</h2>
+    <div class="item"><div>🗡️ <b id="weaponName">Kiếm tập sự</b><small id="weaponDesc">+0 ATK</small></div><span>⚔️</span></div>
+    <div class="item"><div>🛡️ <b id="armorName">Áo choàng vải</b><small id="armorDesc">+0 DEF</small></div><span>✦</span></div>
+   </div>
+  </aside>
+  <section>
+   <div class="panel">
+    <div class="tabs">
+     <button class="active" data-tab="battleTab">⚔️ Chiến đấu</button>
+     <button data-tab="bagTab">🎒 Túi đồ</button>
+     <button data-tab="questTab">📜 Nhiệm vụ</button>
+     <button data-tab="townTab">🏘️ Thành phố</button>
+    </div>
+    <div class="section show" id="battleTab">
+     <h2>⚔️ Chiến trường</h2>
+     <div class="battle">
+      <div class="battleTop">
+       <span class="pill" id="areaName">🌲 Rừng Nguyệt Ảnh</span>
+       <span class="pill" id="enemyLevel">Quái cấp 1</span>
+      </div>
+      <div class="sceneHud">
+       <div class="sceneHudCard">
+        <b>🧝 Astra & đồng đội</b>
+        <span>Đội hình 3 nhân vật · LV <strong id="sceneLevelHud">1</strong></span>
+        <div class="sceneHudBar"><i id="partyHpHud" style="width:100%"></i></div>
+        <small>HP <strong id="partyHpHudText">120 / 120</strong></small>
+       </div>
+       <div class="sceneHudCard enemyHud">
+        <b id="enemyHudName">Slime Nguyệt</b>
+        <span id="enemyHudRank">QUÁI THƯỜNG</span>
+        <div class="sceneHudBar"><i id="enemyHpHud" style="width:100%"></i></div>
+        <small>HP <strong id="enemyHpHudText">42 / 42</strong></small>
+       </div>
+      </div>
+      <div class="turnBanner" id="turnStatus">
+       <span class="turnDot"></span><b id="turnTitle">LƯỢT CỦA BẠN</b>
+       <small id="turnSubtitle">Chọn một hành động bên dưới.</small>
+      </div>
+      <div class="arena">
+       <div class="fighter player" id="playerFighter">
+        <div class="fighterCard">
+         <div class="fighterHead"><b>🧝 Astra</b><span>LV <span id="sceneLevel">1</span></span></div>
+         <div class="statrow"><span>❤️ HP</span><b id="sceneHpText">120 / 120</b></div>
+         <div class="bar"><div class="fill hp" id="sceneHpBar" style="width:100%"></div></div>
+        </div>
+        <div class="spriteStage"><div class="platform"></div><div class="sceneSprite" id="playerSprite">🧝🏻‍♀️</div></div>
+        <div class="fighterCaption">Astra · Kiếm sĩ Ánh Trăng</div>
+       </div>
+       <div class="fighter enemy" id="enemyFighter">
+        <div class="fighterCard">
+         <div class="fighterHead"><b id="enemyName">Slime Nguyệt</b><span id="enemyRank" class="rankBadge">THƯỜNG</span></div>
+         <div class="fighterHead" style="margin-top:-2px"><span id="enemyLevelSmall">LV 1</span><span id="enemyTraitShort">Không có nội tại</span></div>
+         <div class="statrow"><span>❤️ HP</span><b id="enemyHpText">42 / 42</b></div>
+         <div class="bar"><div class="fill hp" id="enemyHpBar" style="width:100%"></div></div>
+         <div class="bossPhaseBars" id="bossPhaseBars">
+          <div class="bossPhaseNotice" id="bossPhaseNotice">🐉 BOSS · 2 GIAI ĐOẠN</div>
+          <div class="bossPhaseTitle"><b>Thanh máu 1 · Giai đoạn 1</b><span id="bossP1Text">100%</span></div>
+          <div class="bossPhaseTrack"><div class="bossPhaseFill phaseOne" id="bossP1Bar"></div></div>
+          <div class="bossPhaseTitle"><b>Thanh máu 2 · Giai đoạn 2</b><span id="bossP2Text">Chưa mở</span></div>
+          <div class="bossPhaseTrack"><div class="bossPhaseFill phaseTwo" id="bossP2Bar"></div></div>
+         </div>
+         <div class="traitInfo" id="enemyTraitInfo">Không có nội tại đặc biệt</div>
+        </div>
+        <div class="spriteStage"><div class="platform"></div><div class="sceneSprite" id="enemySprite">🟢</div></div>
+        <div class="fighterCaption" id="enemyDesc">Sinh vật nhỏ bé của khu rừng</div>
+       </div>
+      </div>
+      <div class="battleBottom">
+       <div class="combatHint" id="combatHint">Bạn hành động trước. Đối thủ chỉ tấn công sau khi bạn chọn lệnh.</div>
+       <span class="pill">LƯỢT <b id="turn">1</b></span>
+      </div>
+     </div>
+     <div class="actions">
+      <button class="primary" id="attackBtn">⚔️ Chém thường</button>
+      <button class="magic" id="skillBtn">🌙 Nguyệt trảm · 12 MP</button>
+      <button class="heal" id="potionBtn">🧪 Dùng bình máu</button>
+      <button class="guard" id="guardBtn">🛡️ Phòng thủ</button>
+      <button class="utility" id="runBtn">🏃 Rút lui</button>
+      <button id="nextBtn" style="display:none">🧭 Tiếp tục thám hiểm</button>
+     </div>
+     <div class="notice" id="notice"></div>
+     <div class="encounterHelp">👥 Astra chiến đấu cùng hai đồng đội trong cùng khung cảnh. Chọn lệnh theo lượt, thanh HP sẽ cập nhật ngay. <br>🧭 Mỗi lần thám hiểm có thể gặp quái thường, <b>quái tinh anh</b>, <b>quái ẩn</b> hoặc Boss. Quái đặc biệt có nội tại riêng — hãy đọc mô tả trước khi chọn đòn!</div>
+     <h2 style="margin-top:16px">📖 Nhật ký trận đấu</h2>
+     <div class="log" id="log" aria-live="polite"></div>
+    </div>
+    <div class="section" id="bagTab">
+     <h2>🎒 Túi đồ & vật phẩm</h2>
+     <div id="inventory"></div>
+    </div>
+    <div class="section" id="questTab">
+     <h2>📜 Bảng nhiệm vụ</h2>
+     <div id="quests"></div>
+    </div>
+    <div class="section" id="townTab">
+     <h2>🏘️ Thành phố Ánh Trăng</h2>
+     <p style="font-size:12px;color:var(--muted)">Nghỉ ngơi và chuẩn bị trước khi tiếp tục hành trình.</p>
+     <div class="item"><div>🛏️ <b>Quán trọ</b><small>Hồi đầy HP và MP</small></div><button id="restBtn">Nghỉ · 20 vàng</button></div>
+     <div class="item"><div>🧪 <b>Bình hồi phục</b><small>Hồi 55 HP trong chiến đấu</small></div><button id="buyPotionBtn">Mua · 18 vàng</button></div>
+     <div class="item"><div>🗡️ <b>Kiếm Bạc</b><small>+7 ATK · chỉ mua một lần</small></div><button id="buySwordBtn">Mua · 90 vàng</button></div>
+     <div class="item"><div>🛡️ <b>Giáp Lam Nguyệt</b><small>+5 DEF · chỉ mua một lần</small></div><button id="buyArmorBtn">Mua · 85 vàng</button></div>
+     <div class="item"><div>🗺️ <b>Thám hiểm vùng mới</b><small>Mở khóa theo cấp độ</small></div><button id="travelBtn">Đi thám hiểm</button></div>
+    </div>
+   </div>
+   <div class="panel">
+    <h2>💾 Tiến trình</h2>
+    <div class="actions">
+     <button id="saveBtn">💾 Lưu ngay</button>
+     <button id="loadBtn">📂 Tải bản lưu</button>
+     <button id="exportBtn">⬇️ Xuất bản lưu</button>
+     <button id="importBtn">⬆️ Nhập bản lưu</button>
+     <button id="newBtn">🆕 Chơi mới</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:0">Tự lưu sau mỗi lượt, vật phẩm, lên cấp và thay đổi tiến trình. Dữ liệu nằm trong trình duyệt trên thiết bị này.</p>
+   </div>
+  </section>
+ </div>
+ <div class="footer">Huyền Thoại Ánh Trăng · Phiên bản trình duyệt · Chúc bạn phiêu lưu vui vẻ ✦</div>
+</div>
+<div class="modal" id="modal">
+ <div class="modalbox">
+  <div style="font-size:52px" id="modalIcon">✨</div>
+  <h2 id="modalTitle">Thông báo</h2>
+  <p id="modalText"></p>
+  <button id="modalOk">Tiếp tục</button>
+ </div>
+</div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden>
+<script src="game.js" defer></script>
+</body>
+</html>
